@@ -31,6 +31,7 @@ public class LocationViewPane extends Pane {
    private ButtonEx btnCancel;
 
    private final LocationFX locationFX = new LocationFX("", "", "", "", 0.0, 0.0);
+   private LocationFX locationToModify;
 
    private final QueryController queryController;
 
@@ -194,8 +195,11 @@ public class LocationViewPane extends Pane {
          } else if (locationFX.getId().isEmpty()) {
             UI.showAlert(AlertType.WARNING, "Input error", "Invalid ID", "ID cannot be empty string.");
          } else {
-            if (updateMode) queryController.onUpdate(locationFX);
-            else queryController.onAdd(locationFX);
+            if (updateMode) {
+               queryController.onUpdate(locationFX);
+               LocationFX.copyData(locationFX, locationToModify);
+            } else
+               queryController.onAdd(locationFX);
             parent.receiveNotification(this, null);
             updateMode = false;
          }
@@ -206,12 +210,8 @@ public class LocationViewPane extends Pane {
    }
 
    public void updateLocation(LocationFX location) {
-      locationFX.setId(location.getId());
-      locationFX.setCity(location.getCity());
-      locationFX.setCountry(location.getCountry());
-      locationFX.setRegion(location.getRegion());
-      locationFX.setLatitude(location.getLatitude());
-      locationFX.setLongitude(location.getLongitude());
+      locationToModify = location;
+      LocationFX.copyData(location, locationFX);
       updateMode = true;
    }
 }

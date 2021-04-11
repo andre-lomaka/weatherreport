@@ -32,6 +32,15 @@ public class LocationFX {
       this.longitude = new SimpleDoubleProperty(location.getLongitude());
    }
 
+   public static void copyData(LocationFX src, LocationFX dest) {
+      dest.setId(src.getId());
+      dest.setCity(src.getCity());
+      dest.setCountry(src.getCountry());
+      dest.setRegion(src.getRegion());
+      dest.setLatitude(src.getLatitude());
+      dest.setLongitude(src.getLongitude());
+   }
+
    public String getId() {
       return id.get();
    }

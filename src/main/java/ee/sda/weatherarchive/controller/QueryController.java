@@ -43,7 +43,14 @@ public class QueryController {
    }
 
    public void onUpdate(LocationFX location) {
-      System.out.println("Updating " + location.getId());
+      locationRepository.update(LocationFactory.createLocation(
+                                   location.getId(),
+                                   "".equals(location.getCity().trim()) ? null : location.getCity(),
+                                   "".equals(location.getCountry().trim()) ? null : location.getCountry(),
+                                   "".equals(location.getRegion().trim()) ? null : location.getRegion(),
+                                   location.getLatitude(),
+                                   location.getLongitude()
+                               ));
    }
 
    public void onDelete(LocationFX location) {

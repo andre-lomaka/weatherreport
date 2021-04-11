@@ -25,7 +25,7 @@ source weather_archive.sql
 
 ### Step 3
 
-Create user and grant access to the created database:
+Create user and grant access on the created database:
 ```
 CREATE USER 'weather_user' IDENTIFIED BY 'wpass';
 GRANT ALL on weather_archive.* TO 'weather_user';
@@ -33,11 +33,12 @@ GRANT ALL on weather_archive.* TO 'weather_user';
 
 ## Compile and run.
 ```
-mvn javafx:run
+mvn clean javafx:run
 ```
 
 ## TODO
 
-* Error handling.
-* Location update.
+* Exception handling.
 * Weather data download from services.
+* Location search.
+* Weather statistics.
