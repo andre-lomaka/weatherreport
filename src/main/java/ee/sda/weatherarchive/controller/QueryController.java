@@ -2,6 +2,7 @@ package ee.sda.weatherarchive.controller;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.Map;
 import javafx.collections.ObservableList;
 import javax.persistence.EntityManager;
 
@@ -9,6 +10,9 @@ import ee.sda.weatherarchive.view.LocationFX;
 import ee.sda.weatherarchive.repository.LocationRepository;
 import ee.sda.weatherarchive.util.HibernateUtil;
 import ee.sda.weatherarchive.util.LocationFactory;
+import ee.sda.weatherarchive.util.DownloadUtil;
+import ee.sda.weatherarchive.util.WeatherSource;
+import ee.sda.weatherarchive.util.UnsuccessfulQueryException;
 import ee.sda.weatherarchive.jpamodel.JPALocation;
 
 public class QueryController {
@@ -79,6 +83,13 @@ public class QueryController {
 
    public void onDownload(LocationFX location) {
       System.out.println("Downloading data for " + location.getId());
+      try {
+         Map<String, Object> data = DownloadUtil.downloadWeatherData(WeatherSource.ACCUWEATHER, location.getLatitude(), location.getLongitude());
+         double t = (double) data.get("temperature");
+         System.out.println("Temperature: " + t);
+      } catch (UnsuccessfulQueryException uqe) {
+         System.out.println(uqe.toString());
+      }
    }
 
    public static void closeConnection() {

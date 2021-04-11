@@ -36,6 +36,10 @@ GRANT ALL on weather_archive.* TO 'weather_user';
 mvn clean javafx:run
 ```
 
+## API keys
+
+Add your OpenWeatherMap and AccuWeather API keys to `config.properties` file.
+
 ## TODO
 
 * Exception handling.
