@@ -1,7 +1,6 @@
 package ee.sda.weatherarchive.repository;
 
 import java.util.Optional;
-import java.util.List;
 import javax.persistence.EntityManager;
 import ee.sda.weatherarchive.jpamodel.JPAWeatherData;
 import ee.sda.weatherarchive.jpamodel.JPAWeatherService;

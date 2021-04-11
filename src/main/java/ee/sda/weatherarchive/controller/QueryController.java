@@ -77,6 +77,10 @@ public class QueryController {
       if (opt.isPresent()) locationsFX.add(new LocationFX(location));
    }
 
+   public void onDownload(LocationFX location) {
+      System.out.println("Downloading data for " + location.getId());
+   }
+
    public static void closeConnection() {
       if (entityManager != null) {
          HibernateUtil.closeEntityManager();

@@ -36,6 +36,8 @@ public class LocationsPane extends Pane {
    private ButtonEx btnEdit;
    private ButtonEx btnDelete;
    private ButtonEx btnRetrieveAll;
+   private ButtonEx btnDownload;
+   private ButtonBar buttonBar;
 
    private TableView<LocationFX> locationsTable;
    private NotificationReceiver parent;
@@ -69,7 +71,7 @@ public class LocationsPane extends Pane {
       setLabelProperties(lbLocations);
       toggleNode = createToggleNode();
       locationsTable = createLocationsTable();
-      ButtonBar buttonBar = new ButtonBar();
+      buttonBar = new ButtonBar();
       btnRetrieveAll = createButton("Retrieve all");
       btnAdd = createButton("Add...");
       btnEdit = createButton("Edit...");
@@ -77,7 +79,11 @@ public class LocationsPane extends Pane {
       buttonBar.getButtons().addAll(btnRetrieveAll, btnAdd, btnEdit, btnDelete);
       buttonBar.setLayoutX(50.0);
       buttonBar.setLayoutY(500.0);
-      getChildren().addAll(lbLocations, toggleNode, locationsTable, buttonBar);
+      btnDownload = createButton("Download");
+      btnDownload.setLayoutX(50.0);
+      btnDownload.setLayoutY(500.0);
+      btnDownload.setVisible(false);
+      getChildren().addAll(lbLocations, toggleNode, locationsTable, buttonBar, btnDownload);
    }
 
    private void setLabelProperties(Label label) {
@@ -111,10 +117,13 @@ public class LocationsPane extends Pane {
             RadioButton button = (RadioButton)group.getSelectedToggle();
             if (button == button1) {
                lbLocations.setText("Modify");
+               setVisibilityStatus(true, false);
             } else if (button == button2) {
                lbLocations.setText("Download");
+               setVisibilityStatus(false, true);
             } else {
                lbLocations.setText("Statistics");
+               setVisibilityStatus(false, false);
             }
          }
       });
@@ -125,6 +134,11 @@ public class LocationsPane extends Pane {
       hBox.setLayoutX(50.0);
       hBox.setLayoutY(80.0);
       return hBox;
+   }
+
+   private void setVisibilityStatus(boolean... status) {
+      buttonBar.setVisible(status[0]);
+      btnDownload.setVisible(status[1]);
    }
 
    private TableView<LocationFX> createLocationsTable() {
@@ -214,6 +228,13 @@ public class LocationsPane extends Pane {
          LocationFX lfx = locationsTable.getSelectionModel().getSelectedItem();
          if (lfx != null) {
             queryController.onDelete(lfx);
+         } else {
+            UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
+         }
+      } else if (actionEventSource == btnDownload) {
+         LocationFX lfx = locationsTable.getSelectionModel().getSelectedItem();
+         if (lfx != null) {
+            queryController.onDownload(lfx);
          } else {
             UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
          }
