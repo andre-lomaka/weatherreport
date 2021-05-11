@@ -47,9 +47,23 @@ public class LocationRepository {
       if (!locations.isEmpty()) {
          JPALocation loc = locations.get(0);
          entityManager.getTransaction().begin();
+         entityManager.createQuery("DELETE FROM JPAWeatherData WHERE location_id = ?1").
+                                  setParameter(1, loc.getId()).
+                                  executeUpdate();
          entityManager.remove(loc);
          entityManager.getTransaction().commit();
       }
+   }
+
+   public JPALocation findByName(String name) {
+      List<JPALocation> locations = entityManager.
+                                    createQuery("SELECT c FROM JPALocation c WHERE c.locationName = ?1").
+                                    setParameter(1, name).
+                                    getResultList();
+      if (!locations.isEmpty()) {
+         return locations.get(0);
+      }
+      return null;
    }
 
    public void update(JPALocation location) {

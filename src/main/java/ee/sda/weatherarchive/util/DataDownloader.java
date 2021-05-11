@@ -4,9 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.Properties;
+import java.util.Optional;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,9 +46,10 @@ public abstract class DataDownloader {
       StringBuilder sb;
       HttpRequest request;
       BufferedReader br;
-      GZIPInputStream gis;
+      GZIPInputStream gis = null;
       InputStream is;
       HttpResponse<InputStream> response;
+      boolean gzipped = false;
       try {
          request = HttpRequest.newBuilder(new URI(uri))
                             .version(HttpClient.Version.HTTP_2)
@@ -57,19 +60,30 @@ public abstract class DataDownloader {
       }
       try {
          response = httpClient.send(request, BodyHandlers.ofInputStream());
+
+         HttpHeaders hh = response.headers();
+         Optional<String> aes = hh.firstValue("Content-Encoding");
+         if (aes.isPresent()) {
+            String enc = aes.get();
+            if ("gzip".equals(enc)) gzipped = true;
+         }
+
          is = response.body();
-         gis = new GZIPInputStream(is);
-         br = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8));
+         if (gzipped) {
+            gis = new GZIPInputStream(is);
+            br = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8));
+         } else
+            br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
          sb = new StringBuilder();
          String line;
          while ((line = br.readLine()) != null) {
             sb.append(line);
          }
          br.close();
-         gis.close();
+         if (gzipped) gis.close();
          is.close();
       } catch (IOException ioe) {
-         throw new UnsuccessfulQueryException("getDataFromURI: IOException");
+         throw new UnsuccessfulQueryException("getDataFromURI: IOException " + ioe.toString());
       } catch (InterruptedException ie) {
          throw new UnsuccessfulQueryException("getDataFromURI: InterruptedException");
       }

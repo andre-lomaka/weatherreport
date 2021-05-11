@@ -3,13 +3,16 @@ package ee.sda.weatherarchive.controller;
 import java.util.Optional;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 import javafx.collections.ObservableList;
 import javax.persistence.EntityManager;
 
 import ee.sda.weatherarchive.view.LocationFX;
 import ee.sda.weatherarchive.repository.LocationRepository;
+import ee.sda.weatherarchive.repository.WeatherDataRepository;
 import ee.sda.weatherarchive.util.HibernateUtil;
 import ee.sda.weatherarchive.util.LocationFactory;
+import ee.sda.weatherarchive.util.WeatherDataFactory;
 import ee.sda.weatherarchive.util.DownloadUtil;
 import ee.sda.weatherarchive.util.WeatherSource;
 import ee.sda.weatherarchive.util.UnsuccessfulQueryException;
@@ -21,11 +24,13 @@ public class QueryController {
 
    private static EntityManager entityManager;
    private static LocationRepository locationRepository;
+   private static WeatherDataRepository weatherDataRepository;
 
    public QueryController() {
       if (entityManager == null) {
          entityManager = HibernateUtil.getEntityManager();
          locationRepository = new LocationRepository(entityManager);
+         weatherDataRepository = new WeatherDataRepository(entityManager);
       }
    }
 
@@ -82,14 +87,23 @@ public class QueryController {
    }
 
    public void onDownload(LocationFX location) {
-      System.out.println("Downloading data for " + location.getId());
+      saveWeatherData(WeatherSource.ACCUWEATHER, "AccuWeather", location);
+      saveWeatherData(WeatherSource.OPEN_WEATHER_MAP, "OpenWeatherMap", location);
+   }
+
+   private void saveWeatherData(WeatherSource ws, String sourceName, LocationFX location) {
+      double temperature=0.0, pressure=0.0, humidity=0.0, windSpeed=0.0, windDirection=0.0;
       try {
-         Map<String, Object> data = DownloadUtil.downloadWeatherData(WeatherSource.ACCUWEATHER, location.getLatitude(), location.getLongitude());
-         double t = (double) data.get("temperature");
-         System.out.println("Temperature: " + t);
+         Map<String, Object> data = DownloadUtil.downloadWeatherData(ws, location.getLatitude(), location.getLongitude());
+         temperature = (double) data.get("temperature");
+         pressure = (double) data.get("pressure");
+         humidity = (double) data.get("humidity");
+         windSpeed = (double) data.get("windSpeed");
+         windDirection = (double) data.get("windDirection");
       } catch (UnsuccessfulQueryException uqe) {
          System.out.println(uqe.toString());
       }
+      weatherDataRepository.save(WeatherDataFactory.createWeatherData(temperature, pressure, humidity, windSpeed, windDirection, locationRepository.findByName(location.getId()), sourceName, LocalDateTime.now()));
    }
 
    public static void closeConnection() {

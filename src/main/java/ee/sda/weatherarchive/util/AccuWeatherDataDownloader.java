@@ -4,14 +4,13 @@ import java.util.Map;
 import java.util.HashMap;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 public class AccuWeatherDataDownloader extends DataDownloader {
 
    private static final DataDownloader INSTANCE = new AccuWeatherDataDownloader();
 
    private AccuWeatherDataDownloader() {
-	   super("http://dataservice.accuweather.com/");
+      super("http://dataservice.accuweather.com/");
       apiKey = properties.getProperty("ACCUWEATHER_KEY");
    }
 
@@ -35,14 +34,21 @@ public class AccuWeatherDataDownloader extends DataDownloader {
 
       JSONObject tobj = jobj.getJSONObject("Temperature").getJSONObject("Metric");
       JSONObject pobj = jobj.getJSONObject("Pressure").getJSONObject("Metric");
+      JSONObject wdobj = jobj.getJSONObject("Wind").getJSONObject("Direction");
+      JSONObject wsobj = jobj.getJSONObject("Wind").getJSONObject("Speed").getJSONObject("Metric");
 
       double temperature = tobj.getDouble("Value");
       double pressure = pobj.getDouble("Value");
       double humidity = jobj.getDouble("RelativeHumidity");
+      double windDirection = wdobj.getDouble("Degrees");
+      double windSpeed = wsobj.getDouble("Value");
 
       weatherDataMap.put("temperature", temperature);
       weatherDataMap.put("pressure", pressure);
       weatherDataMap.put("humidity", humidity);
+      weatherDataMap.put("windDirection", windDirection);
+      weatherDataMap.put("windSpeed", windSpeed);
+
       return weatherDataMap;
    }
 }

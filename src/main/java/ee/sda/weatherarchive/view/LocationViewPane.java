@@ -25,7 +25,7 @@ import ee.sda.weatherarchive.controller.QueryController;
 
 public class LocationViewPane extends Pane {
 
-   private NotificationReceiver parent;
+   private final NotificationReceiver parent;
 
    private ButtonEx btnOk;
    private ButtonEx btnCancel;

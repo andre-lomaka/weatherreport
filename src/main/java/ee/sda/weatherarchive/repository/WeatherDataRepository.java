@@ -34,10 +34,10 @@ public class WeatherDataRepository {
 
    private void addService(JPAWeatherData weatherData) {
       String name = weatherData.getService().getName();
-      JPAWeatherService service = (JPAWeatherService) entityManager.
-                                                      createQuery("SELECT c FROM JPAWeatherService c WHERE c.name = ?1", JPAWeatherService.class).
-                                                      setParameter(1, name).
-                                                      getSingleResult();
+      JPAWeatherService service = entityManager.
+            createQuery("SELECT c FROM JPAWeatherService c WHERE c.name = ?1", JPAWeatherService.class).
+            setParameter(1, name).
+            getSingleResult();
       weatherData.setService(service);
    }
 

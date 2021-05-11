@@ -40,7 +40,7 @@ public class LocationsPane extends Pane {
    private ButtonBar buttonBar;
 
    private TableView<LocationFX> locationsTable;
-   private NotificationReceiver parent;
+   private final NotificationReceiver parent;
 
    private int currentTableRowId = -1;
 
@@ -235,6 +235,7 @@ public class LocationsPane extends Pane {
          LocationFX lfx = locationsTable.getSelectionModel().getSelectedItem();
          if (lfx != null) {
             queryController.onDownload(lfx);
+            UI.showAlert(AlertType.INFORMATION, "Information", null, "Download successful!");
          } else {
             UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
          }
