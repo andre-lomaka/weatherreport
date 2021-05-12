@@ -29,6 +29,7 @@ public class LocationViewPane extends Pane {
 
    private ButtonEx btnOk;
    private ButtonEx btnCancel;
+   private Label lbLocation;
 
    private final LocationFX locationFX = new LocationFX("", "", "", "", 0.0, 0.0);
    private LocationFX locationToModify;
@@ -51,7 +52,7 @@ public class LocationViewPane extends Pane {
    }
 
    private void prepareChildren() {
-      Label lbLocation = new Label("Enter location data");
+      lbLocation = new Label();
       setLabelProperties(lbLocation);
       GridPane gpData = createLocationDataGridPane();
       ButtonBar buttonBar = new ButtonBar();
@@ -61,6 +62,10 @@ public class LocationViewPane extends Pane {
       buttonBar.setLayoutX(100.0);
       buttonBar.setLayoutY(430.0);
       getChildren().addAll(lbLocation, gpData, buttonBar);
+   }
+
+   public void setTitle(String txt) {
+      lbLocation.setText(txt);
    }
 
    private void setLabelProperties(Label label) {
@@ -198,8 +203,9 @@ public class LocationViewPane extends Pane {
             if (updateMode) {
                queryController.onUpdate(locationFX);
                LocationFX.copyData(locationFX, locationToModify);
-            } else
-               queryController.onAdd(locationFX);
+            } else if (!queryController.onAdd(locationFX)) {
+               UI.showAlert(AlertType.WARNING, "Warning", null, "Location already exists");
+            }
             parent.receiveNotification(this, null);
             updateMode = false;
          }

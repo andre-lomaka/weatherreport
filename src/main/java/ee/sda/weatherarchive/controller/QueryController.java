@@ -74,7 +74,7 @@ public class QueryController {
       locationsFX.remove(location);
    }
 
-   public void onAdd(LocationFX location) {
+   public boolean onAdd(LocationFX location) {
       Optional<JPALocation> opt = locationRepository.save(LocationFactory.createLocation(
                                                              location.getId(),
                                                              "".equals(location.getCity().trim()) ? null : location.getCity(),
@@ -83,26 +83,26 @@ public class QueryController {
                                                              location.getLatitude(),
                                                              location.getLongitude()
                                                          ));
-      if (opt.isPresent()) locationsFX.add(new LocationFX(location));
+      if (opt.isPresent()) {
+         locationsFX.add(new LocationFX(location));
+         return true;
+      } else
+         return false;
    }
 
-   public void onDownload(LocationFX location) {
+   public void onDownload(LocationFX location) throws UnsuccessfulQueryException {
       saveWeatherData(WeatherSource.ACCUWEATHER, "AccuWeather", location);
       saveWeatherData(WeatherSource.OPEN_WEATHER_MAP, "OpenWeatherMap", location);
    }
 
-   private void saveWeatherData(WeatherSource ws, String sourceName, LocationFX location) {
+   private void saveWeatherData(WeatherSource ws, String sourceName, LocationFX location) throws UnsuccessfulQueryException {
       double temperature=0.0, pressure=0.0, humidity=0.0, windSpeed=0.0, windDirection=0.0;
-      try {
-         Map<String, Object> data = DownloadUtil.downloadWeatherData(ws, location.getLatitude(), location.getLongitude());
-         temperature = (double) data.get("temperature");
-         pressure = (double) data.get("pressure");
-         humidity = (double) data.get("humidity");
-         windSpeed = (double) data.get("windSpeed");
-         windDirection = (double) data.get("windDirection");
-      } catch (UnsuccessfulQueryException uqe) {
-         System.out.println(uqe.toString());
-      }
+      Map<String, Object> data = DownloadUtil.downloadWeatherData(ws, location.getLatitude(), location.getLongitude());
+      temperature = (double) data.get("temperature");
+      pressure = (double) data.get("pressure");
+      humidity = (double) data.get("humidity");
+      windSpeed = (double) data.get("windSpeed");
+      windDirection = (double) data.get("windDirection");
       weatherDataRepository.save(WeatherDataFactory.createWeatherData(temperature, pressure, humidity, windSpeed, windDirection, locationRepository.findByName(location.getId()), sourceName, LocalDateTime.now()));
    }
 

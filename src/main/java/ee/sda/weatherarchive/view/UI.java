@@ -19,7 +19,7 @@ import javafx.stage.WindowEvent;
 
 import ee.sda.weatherarchive.controller.QueryController;
 
-public class UI {
+public class UI implements NotificationReceiver {
 
    public final static double WINDOW_HEIGHT = 650.0;
    public final static double MAIN_BUTTON_AREA_WIDTH = 200.0;
@@ -37,7 +37,7 @@ public class UI {
 
    public Parent asParent() {
       if (anchorPane != null) return anchorPane;
-      vBox = new VBoxEx();
+      vBox = new VBoxEx(this);
       stackPane = new StackPaneEx(queryController);
       anchorPane = new AnchorPane(vBox, stackPane);
       setAnchorPaneProperties(anchorPane);
@@ -76,5 +76,14 @@ public class UI {
       alert.setHeaderText(headerText);
       alert.setContentText(contentText);
       alert.showAndWait();
+   }
+
+   @Override
+   public void receiveNotification(Node child, Object msg) {
+      if ("weather".equals(msg.toString())) {
+         stackPane.setOnTop(2);
+      } else {
+         stackPane.setOnTop(0);
+      }
    }
 }

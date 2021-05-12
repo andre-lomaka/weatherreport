@@ -14,6 +14,7 @@ public class StackPaneEx extends StackPane implements NotificationReceiver {
 
    private LocationsPane pnLocations;
    private LocationViewPane pnLocationView;
+   private WeatherPane pnWeather;
 
    private final QueryController queryController;
 
@@ -38,23 +39,47 @@ public class StackPaneEx extends StackPane implements NotificationReceiver {
    private void prepareChildren() {
       pnLocations = new LocationsPane(this, queryController);
       pnLocationView = new LocationViewPane(this, queryController);
-      getChildren().addAll(pnLocations, pnLocationView);
-      pnLocations.toFront();
-      pnLocations.setVisible(true);
-      pnLocationView.setVisible(false);
+      pnWeather = new WeatherPane();
+      getChildren().addAll(pnLocations, pnLocationView, pnWeather);
+      setOnTop(0);
+   }
+
+   public void setOnTop(int paneNumber) {
+      switch (paneNumber)
+      {
+         case 0:
+            pnLocations.toFront();
+            pnLocations.setVisible(true);
+            pnLocationView.setVisible(false);
+            pnWeather.setVisible(false);
+            break;
+         case 1:
+            pnLocationView.toFront();
+            pnLocationView.setVisible(true);
+            pnLocations.setVisible(false);
+            pnWeather.setVisible(false);
+            break;
+         case 2:
+            pnWeather.toFront();
+            pnWeather.setVisible(true);
+            pnLocationView.setVisible(false);
+            pnLocations.setVisible(false);
+            break;
+      }
    }
 
    @Override
    public void receiveNotification(Node child, Object msg) {
       if (child instanceof LocationsPane) {
-         if (msg != null) pnLocationView.updateLocation((LocationFX)msg);
-         pnLocationView.toFront();
-         pnLocationView.setVisible(true);
-         pnLocations.setVisible(false);
+         if (msg != null) {
+            pnLocationView.updateLocation((LocationFX)msg);
+            pnLocationView.setTitle("Enter location data (edit)");
+         } else {
+            pnLocationView.setTitle("Enter location data (add)");
+         }
+         setOnTop(1);
       } else if (child instanceof LocationViewPane) {
-         pnLocations.toFront();
-         pnLocations.setVisible(true);
-         pnLocationView.setVisible(false);
+         setOnTop(0);
       }
    }
 }

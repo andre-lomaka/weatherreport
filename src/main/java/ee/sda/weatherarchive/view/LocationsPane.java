@@ -26,6 +26,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 
 import ee.sda.weatherarchive.controller.QueryController;
+import ee.sda.weatherarchive.util.UnsuccessfulQueryException;
 
 @SuppressWarnings("unchecked")
 public class LocationsPane extends Pane {
@@ -67,7 +68,7 @@ public class LocationsPane extends Pane {
    }
 
    private void prepareChildren() {
-      lbLocations = new Label("Modify");
+      lbLocations = new Label("Modify locations");
       setLabelProperties(lbLocations);
       toggleNode = createToggleNode();
       locationsTable = createLocationsTable();
@@ -116,13 +117,13 @@ public class LocationsPane extends Pane {
          if (group.getSelectedToggle() != null) {
             RadioButton button = (RadioButton)group.getSelectedToggle();
             if (button == button1) {
-               lbLocations.setText("Modify");
+               lbLocations.setText("Modify locations");
                setVisibilityStatus(true, false);
             } else if (button == button2) {
-               lbLocations.setText("Download");
+               lbLocations.setText("Download weather data");
                setVisibilityStatus(false, true);
             } else {
-               lbLocations.setText("Statistics");
+               lbLocations.setText("Show weather statistics");
                setVisibilityStatus(false, false);
             }
          }
@@ -234,8 +235,12 @@ public class LocationsPane extends Pane {
       } else if (actionEventSource == btnDownload) {
          LocationFX lfx = locationsTable.getSelectionModel().getSelectedItem();
          if (lfx != null) {
-            queryController.onDownload(lfx);
-            UI.showAlert(AlertType.INFORMATION, "Information", null, "Download successful!");
+            try {
+               queryController.onDownload(lfx);
+               UI.showAlert(AlertType.INFORMATION, "Information", null, "Download successful!");
+            } catch (UnsuccessfulQueryException uqe) {
+               UI.showAlert(AlertType.ERROR, "Error", null, uqe.toString());
+            }
          } else {
             UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
          }
