@@ -17,6 +17,7 @@ import ee.sda.weatherarchive.util.DownloadUtil;
 import ee.sda.weatherarchive.util.WeatherSource;
 import ee.sda.weatherarchive.util.UnsuccessfulQueryException;
 import ee.sda.weatherarchive.jpamodel.JPALocation;
+import ee.sda.weatherarchive.jpamodel.JPAWeatherData;
 
 public class QueryController {
 
@@ -93,6 +94,20 @@ public class QueryController {
    public void onDownload(LocationFX location) throws UnsuccessfulQueryException {
       saveWeatherData(WeatherSource.ACCUWEATHER, "AccuWeather", location);
       saveWeatherData(WeatherSource.OPEN_WEATHER_MAP, "OpenWeatherMap", location);
+   }
+
+   public String onShowStatistics(LocationFX location) {
+      List<JPAWeatherData> jwdList = weatherDataRepository.findById(location.getId());
+      StringBuilder sb = new StringBuilder("Statistics for: " + location.getId() + "\n\n");
+      sb.append("City: " + location.getCity() + "\n");
+      sb.append("Country: " + location.getCountry() + "\n\n");
+      for (JPAWeatherData jwd : jwdList) {
+         sb.append("Service: " + jwd.getService().getName() + "\n");
+         sb.append("Time: " + jwd.getDateTime() + "\n");
+         sb.append("Temperature: " + jwd.getTemperature() + "\n");
+         sb.append("Pressure: " + jwd.getPressure() + "\n\n");
+      }
+      return sb.toString();
    }
 
    private void saveWeatherData(WeatherSource ws, String sourceName, LocationFX location) throws UnsuccessfulQueryException {

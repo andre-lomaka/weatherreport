@@ -36,12 +36,21 @@ public class VBoxEx extends VBox {
       btnWeather = createButton("Weather data");
       btnLocations = createButton("Locations");
       getChildren().addAll(btnWeather, btnLocations);
-      activateButton(btnLocations);
+      activateLocationsButton();
    }
 
-   private void activateButton(ButtonEx btn) {
-      btn.setBackgroundEx("#1620A1");
-      btn.setSelected(true);
+   public void activateWeatherButton() {
+      btnWeather.setBackgroundEx("#1620A1");
+      btnWeather.setSelected(true);
+      btnLocations.setSelected(false);
+      btnLocations.setBackgroundEx("#05071F");
+   }
+
+   public void activateLocationsButton() {
+      btnLocations.setBackgroundEx("#1620A1");
+      btnLocations.setSelected(true);
+      btnWeather.setSelected(false);
+      btnWeather.setBackgroundEx("#05071F");
    }
 
    private ButtonEx createButton(String text) {
@@ -63,14 +72,10 @@ public class VBoxEx extends VBox {
    private void handleCommand(ActionEvent actionEvent) {
       Object actionEventSource = actionEvent.getSource();
       if (actionEventSource == btnWeather) {
-         activateButton(btnWeather);
-         btnLocations.setSelected(false);
-         btnLocations.setBackgroundEx("#05071F");
+         activateWeatherButton();
          parent.receiveNotification(null, "weather");
       } else {
-         activateButton(btnLocations);
-         btnWeather.setSelected(false);
-         btnWeather.setBackgroundEx("#05071F");
+         activateLocationsButton();
          parent.receiveNotification(null, "locations");
       }
    }

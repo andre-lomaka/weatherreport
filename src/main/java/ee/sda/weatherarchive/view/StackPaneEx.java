@@ -15,12 +15,14 @@ public class StackPaneEx extends StackPane implements NotificationReceiver {
    private LocationsPane pnLocations;
    private LocationViewPane pnLocationView;
    private WeatherPane pnWeather;
+   private NotificationReceiver parent;
 
    private final QueryController queryController;
 
-   public StackPaneEx(QueryController queryController) {
+   public StackPaneEx(NotificationReceiver parent, QueryController queryController) {
       super();
       this.queryController = queryController;
+      this.parent = parent;
       setProperties();
       prepareChildren();
    }
@@ -72,12 +74,19 @@ public class StackPaneEx extends StackPane implements NotificationReceiver {
    public void receiveNotification(Node child, Object msg) {
       if (child instanceof LocationsPane) {
          if (msg != null) {
-            pnLocationView.updateLocation((LocationFX)msg);
-            pnLocationView.setTitle("Enter location data (edit)");
+            if (msg instanceof LocationFX) {
+               pnLocationView.updateLocation((LocationFX)msg);
+               pnLocationView.setTitle("Enter location data (edit)");
+               setOnTop(1);
+            } else {
+               setOnTop(2);
+               pnWeather.setAreaText(msg.toString());
+               parent.receiveNotification(this, null);
+            }
          } else {
             pnLocationView.setTitle("Enter location data (add)");
+            setOnTop(1);
          }
-         setOnTop(1);
       } else if (child instanceof LocationViewPane) {
          setOnTop(0);
       }

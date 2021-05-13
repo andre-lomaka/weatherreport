@@ -42,7 +42,6 @@ Add your OpenWeatherMap and AccuWeather API keys to `config.properties` file.
 
 ## TODO
 
-* Exception handling.
-* Weather data download from services.
+* Database exception handling.
 * Location search.
-* Weather statistics.
+* Weather statistics formatted view.

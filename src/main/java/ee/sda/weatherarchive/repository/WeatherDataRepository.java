@@ -1,7 +1,9 @@
 package ee.sda.weatherarchive.repository;
 
 import java.util.Optional;
+import java.util.List;
 import javax.persistence.EntityManager;
+
 import ee.sda.weatherarchive.jpamodel.JPAWeatherData;
 import ee.sda.weatherarchive.jpamodel.JPAWeatherService;
 
@@ -24,6 +26,12 @@ public class WeatherDataRepository {
          System.err.println("Exception occured. " + e.getMessage());
       }
       return Optional.empty();
+   }
+
+   public List<JPAWeatherData> findById(String s) {
+      return entityManager.createQuery("SELECT d FROM JPAWeatherData d WHERE location_id = (SELECT id FROM JPALocation WHERE locationName=?1)", JPAWeatherData.class).
+                           setParameter(1, s).
+                           getResultList();
    }
 
    public void delete(JPAWeatherData weatherData) {

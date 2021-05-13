@@ -38,6 +38,7 @@ public class LocationsPane extends Pane {
    private ButtonEx btnDelete;
    private ButtonEx btnRetrieveAll;
    private ButtonEx btnDownload;
+   private ButtonEx btnShow;
    private ButtonBar buttonBar;
 
    private TableView<LocationFX> locationsTable;
@@ -84,7 +85,11 @@ public class LocationsPane extends Pane {
       btnDownload.setLayoutX(50.0);
       btnDownload.setLayoutY(500.0);
       btnDownload.setVisible(false);
-      getChildren().addAll(lbLocations, toggleNode, locationsTable, buttonBar, btnDownload);
+      btnShow = createButton("Show");
+      btnShow.setLayoutX(50.0);
+      btnShow.setLayoutY(500.0);
+      btnShow.setVisible(false);
+      getChildren().addAll(lbLocations, toggleNode, locationsTable, buttonBar, btnDownload, btnShow);
    }
 
    private void setLabelProperties(Label label) {
@@ -118,13 +123,13 @@ public class LocationsPane extends Pane {
             RadioButton button = (RadioButton)group.getSelectedToggle();
             if (button == button1) {
                lbLocations.setText("Modify locations");
-               setVisibilityStatus(true, false);
+               setVisibilityStatus(true, false, false);
             } else if (button == button2) {
                lbLocations.setText("Download weather data");
-               setVisibilityStatus(false, true);
+               setVisibilityStatus(false, true, false);
             } else {
                lbLocations.setText("Show weather statistics");
-               setVisibilityStatus(false, false);
+               setVisibilityStatus(false, false, true);
             }
          }
       });
@@ -140,6 +145,7 @@ public class LocationsPane extends Pane {
    private void setVisibilityStatus(boolean... status) {
       buttonBar.setVisible(status[0]);
       btnDownload.setVisible(status[1]);
+      btnShow.setVisible(status[2]);
    }
 
    private TableView<LocationFX> createLocationsTable() {
@@ -241,6 +247,14 @@ public class LocationsPane extends Pane {
             } catch (UnsuccessfulQueryException uqe) {
                UI.showAlert(AlertType.ERROR, "Error", null, uqe.toString());
             }
+         } else {
+            UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
+         }
+      } else if (actionEventSource == btnShow) {
+         LocationFX lfx = locationsTable.getSelectionModel().getSelectedItem();
+         if (lfx != null) {
+            String response = queryController.onShowStatistics(lfx);
+            parent.receiveNotification(this, response);
          } else {
             UI.showAlert(AlertType.WARNING, "No selection", "No location selected", "Please select a location in the table.");
          }

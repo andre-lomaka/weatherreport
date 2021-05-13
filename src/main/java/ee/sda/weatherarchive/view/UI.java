@@ -26,7 +26,7 @@ public class UI implements NotificationReceiver {
    public final static double WINDOW_WIDTH = 850.0;
 
    private AnchorPane anchorPane;
-   private VBox vBox;
+   private VBoxEx vBox;
    private StackPaneEx stackPane;
 
    private final QueryController queryController;
@@ -38,7 +38,7 @@ public class UI implements NotificationReceiver {
    public Parent asParent() {
       if (anchorPane != null) return anchorPane;
       vBox = new VBoxEx(this);
-      stackPane = new StackPaneEx(queryController);
+      stackPane = new StackPaneEx(this, queryController);
       anchorPane = new AnchorPane(vBox, stackPane);
       setAnchorPaneProperties(anchorPane);
       AnchorPane.setBottomAnchor(vBox, 0.0);
@@ -80,10 +80,14 @@ public class UI implements NotificationReceiver {
 
    @Override
    public void receiveNotification(Node child, Object msg) {
-      if ("weather".equals(msg.toString())) {
-         stackPane.setOnTop(2);
+      if (child instanceof StackPaneEx) {
+         vBox.activateWeatherButton();
       } else {
-         stackPane.setOnTop(0);
+         if ("weather".equals(msg.toString())) {
+            stackPane.setOnTop(2);
+         } else {
+            stackPane.setOnTop(0);
+         }
       }
    }
 }
