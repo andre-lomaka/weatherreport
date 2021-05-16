@@ -181,13 +181,9 @@ public class LocationViewPane extends Pane {
          .setBackgroundEx("#1D1D1D")
          .setTextFillEx("#D8D8D8")
          .setFontEx(Font.font("Segoe UI", 15.0))
-         .setBorderEx("#E2E2E2", 2.0);
-      btn.setOnMouseEntered(me -> btn.setBackground(new Background(new BackgroundFill(Color.web("#3A3A3A"), CornerRadii.EMPTY, Insets.EMPTY))) );
-      btn.setOnMouseExited(me -> btn.restoreBackground() );
-      btn.setOnMousePressed(me -> { btn.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY))); btn.setTextFillEx("#1D1D1D"); } );
-      btn.setOnMouseReleased(me -> { if (btn.isHover()) btn.setBackground(new Background(new BackgroundFill(Color.web("#3A3A3A"), CornerRadii.EMPTY, Insets.EMPTY)));
-                                     else btn.restoreBackground();
-                                     btn.setTextFillEx("#D8D8D8"); } );
+         .setBorderEx("#E2E2E2", 2.0)
+         .setHoverColor("#3A3A3A")
+         .setPressedColor("#1D1D1D");
       btn.setOnAction(this::handleCommand);
       return btn;
    }

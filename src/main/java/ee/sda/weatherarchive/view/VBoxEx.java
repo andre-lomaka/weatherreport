@@ -62,9 +62,8 @@ public class VBoxEx extends VBox {
          .setTextFillEx("#E7E5E5")
          .setFontEx(Font.font("Arial", 22.0))
          .setPaddingEx(new Insets(0.0, 0.0, 0.0, 20.0))
-         .setBackgroundEx("#05071F");
-      btn.setOnMouseEntered(me -> { if (!btn.isSelected()) btn.setBackground(new Background(new BackgroundFill(Color.web("#10165F"), CornerRadii.EMPTY, Insets.EMPTY))); } );
-      btn.setOnMouseExited(me -> { if (!btn.isSelected()) btn.restoreBackground(); } );
+         .setBackgroundEx("#05071F")
+         .setHoverColor("#10165F");
       btn.setOnAction(this::handleCommand);
       return btn;
    }

@@ -99,25 +99,24 @@ public class QueryController {
    public String onShowStatistics(LocationFX location) {
       List<JPAWeatherData> jwdList = weatherDataRepository.findById(location.getId());
       StringBuilder sb = new StringBuilder("Statistics for: " + location.getId() + "\n\n");
-      sb.append("City: " + location.getCity() + "\n");
-      sb.append("Country: " + location.getCountry() + "\n\n");
+      sb.append("City: ").append(location.getCity()).append("\n")
+        .append("Country: ").append(location.getCountry()).append("\n\n");
       for (JPAWeatherData jwd : jwdList) {
-         sb.append("Service: " + jwd.getService().getName() + "\n");
-         sb.append("Time: " + jwd.getDateTime() + "\n");
-         sb.append("Temperature: " + jwd.getTemperature() + "\n");
-         sb.append("Pressure: " + jwd.getPressure() + "\n\n");
+         sb.append("Service: ").append(jwd.getService().getName()).append("\n")
+           .append("Time: ").append(jwd.getDateTime()).append("\n")
+           .append("Temperature: ").append(jwd.getTemperature()).append("\n")
+           .append("Pressure: ").append(jwd.getPressure()).append("\n\n");
       }
       return sb.toString();
    }
 
    private void saveWeatherData(WeatherSource ws, String sourceName, LocationFX location) throws UnsuccessfulQueryException {
-      double temperature=0.0, pressure=0.0, humidity=0.0, windSpeed=0.0, windDirection=0.0;
       Map<String, Object> data = DownloadUtil.downloadWeatherData(ws, location.getLatitude(), location.getLongitude());
-      temperature = (double) data.get("temperature");
-      pressure = (double) data.get("pressure");
-      humidity = (double) data.get("humidity");
-      windSpeed = (double) data.get("windSpeed");
-      windDirection = (double) data.get("windDirection");
+      double temperature = (double) data.get("temperature");
+      double pressure = (double) data.get("pressure");
+      double humidity = (double) data.get("humidity");
+      double windSpeed = (double) data.get("windSpeed");
+      double windDirection = (double) data.get("windDirection");
       weatherDataRepository.save(WeatherDataFactory.createWeatherData(temperature, pressure, humidity, windSpeed, windDirection, locationRepository.findByName(location.getId()), sourceName, LocalDateTime.now()));
    }
 

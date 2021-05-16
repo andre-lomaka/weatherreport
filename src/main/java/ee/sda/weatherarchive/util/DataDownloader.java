@@ -83,7 +83,7 @@ public abstract class DataDownloader {
          if (gzipped) gis.close();
          is.close();
       } catch (IOException ioe) {
-         throw new UnsuccessfulQueryException("getDataFromURI: IOException " + ioe.toString());
+         throw new UnsuccessfulQueryException("getDataFromURI: IOException " + ioe);
       } catch (InterruptedException ie) {
          throw new UnsuccessfulQueryException("getDataFromURI: InterruptedException");
       }

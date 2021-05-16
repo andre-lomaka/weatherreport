@@ -17,6 +17,8 @@ class ButtonEx extends Button {
 
    private boolean selected;
    private String mainBackground;
+   private String textFill;
+   private String hoverColor;
 
    public ButtonEx(String text) {
       super(text);
@@ -52,6 +54,7 @@ class ButtonEx extends Button {
 
    public ButtonEx setTextFillEx(String value) {
       this.setTextFill(Color.web(value));
+      textFill = value;
       return this;
    }
 
@@ -79,5 +82,20 @@ class ButtonEx extends Button {
    public void restoreBackground() {
       if (mainBackground != null)
          this.setBackground(new Background(new BackgroundFill(Color.web(mainBackground), CornerRadii.EMPTY, Insets.EMPTY)));
+   }
+
+   public ButtonEx setHoverColor(String color) {
+      setOnMouseEntered(me -> { if (!selected) setBackground(new Background(new BackgroundFill(Color.web(color), CornerRadii.EMPTY, Insets.EMPTY))); } );
+      setOnMouseExited(me -> { if (!selected) restoreBackground(); } );
+      hoverColor = color;
+      return this;
+   }
+
+   public ButtonEx setPressedColor(String color) {
+      setOnMousePressed(me -> { setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY))); setTextFill(Color.web(color)); } );
+      setOnMouseReleased(me -> { if (isHover()) setBackground(new Background(new BackgroundFill(Color.web(hoverColor), CornerRadii.EMPTY, Insets.EMPTY)));
+                                     else restoreBackground();
+                                     setTextFillEx(textFill); } );
+      return this;
    }
 }
